@@ -1,0 +1,27 @@
+// 출처 : https://herojoon-dev.tistory.com/217
+
+syntax = "proto3";
+
+// 생성될 class N개 여부
+option java_multiple_files = true;
+
+// 생성될 class 패키지명
+option java_package = "com.example.proto";
+
+message HelloRequest {
+  string name = 1;      // 이름
+  int32 age = 2;        // 나이
+  string message = 3;   // 하고 싶은 말 메시지
+}
+
+message HelloResponse {
+  string greeting_message = 1;  // 인사 메시지
+  string question_message = 2;  // 질문 메시지
+}
+
+service Hello {
+  rpc SayHello (HelloRequest) returns (HelloResponse);  // Unary RPC (단방향 RPC)
+  rpc LotsOfReplies(HelloRequest) returns (stream HelloResponse);  // Server streaming RPC (서버 스트리밍 RPC)
+  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse);  // Client streaming RPC (클라이언트 스트리밍 RPC)
+  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse);  // Bidirectional streaming RPC (양방향 스트리밍 RPC)
+}
