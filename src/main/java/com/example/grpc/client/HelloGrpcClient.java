@@ -14,5 +14,7 @@ public class HelloGrpcClient {
 
         HelloGrpcClientCaller helloGrpcClientCaller = new HelloGrpcClientCaller(channel);
         helloGrpcClientCaller.sendUnaryBlocking();
+        helloGrpcClientCaller.sendServerStreamingBlocking();
+        helloGrpcClientCaller.sendClientStreamingAsync();
     }
 }
