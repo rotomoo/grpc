@@ -1,7 +1,5 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.0'
-    id 'io.spring.dependency-management' version '1.1.5'
 
     // grpc
     id 'com.google.protobuf' version '0.9.4'
@@ -18,13 +16,6 @@ java {
 
 repositories {
     mavenCentral()
-}
-
-// lombok
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
 }
 
 // grpc
@@ -45,22 +36,20 @@ protobuf {
 }
 
 dependencies {
-    // web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    // logging
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+    implementation 'ch.qos.logback:logback-core:1.5.6'
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
 
     // grpc
     runtimeOnly 'io.grpc:grpc-netty-shaded:1.70.0'
     implementation 'io.grpc:grpc-protobuf:1.70.0'
     implementation 'io.grpc:grpc-stub:1.70.0'
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+
+    // test
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
 }
 
 tasks.named('test') {
