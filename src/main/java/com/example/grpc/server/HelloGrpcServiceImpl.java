@@ -1,4 +1,4 @@
-package com.example.grpc;
+package com.example.grpc.server;
 
 import com.example.proto.HelloGrpc;
 import com.example.proto.HelloRequest;
@@ -19,6 +19,7 @@ public class HelloGrpcServiceImpl extends HelloGrpc.HelloImplBase {
      */
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
+        // client -> server request
         logger.info("\n=== Request Data \n{}\n===", request);
 
         // 응답 데이터 셋업

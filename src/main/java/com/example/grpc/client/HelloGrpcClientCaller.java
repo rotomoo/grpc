@@ -1,4 +1,4 @@
-package com.example.grpc;
+package com.example.grpc.client;
 
 import com.example.proto.HelloGrpc;
 import com.example.proto.HelloRequest;
@@ -18,6 +18,9 @@ public class HelloGrpcClientCaller {
         blockingStub = HelloGrpc.newBlockingStub(channel);
     }
 
+    /**
+     * IDL로 정의한 Stub으로 서버에 request
+     */
     public void sendUnaryBlocking() {
         HelloRequest request = HelloRequest.newBuilder()
             .setName("rotomoo") // .proto에 정의한 request value
@@ -27,6 +30,7 @@ public class HelloGrpcClientCaller {
 
         HelloResponse response = blockingStub.sayHello(request);
 
-        logger.info("\n=== Response Data \n{}\n===", response); // response 객체 출력
+        // server -> client response
+        logger.info("\n=== Response Data \n{}\n===", response);
     }
 }

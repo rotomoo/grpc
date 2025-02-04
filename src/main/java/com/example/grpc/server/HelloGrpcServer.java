@@ -1,4 +1,4 @@
-package com.example.grpc;
+package com.example.grpc.server;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
