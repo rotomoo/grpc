@@ -16,5 +16,6 @@ public class HelloGrpcClient {
         helloGrpcClientCaller.sendUnaryBlocking();
         helloGrpcClientCaller.sendServerStreamingBlocking();
         helloGrpcClientCaller.sendClientStreamingAsync();
+        helloGrpcClientCaller.sendBidirectionalStreamingAsync();
     }
 }

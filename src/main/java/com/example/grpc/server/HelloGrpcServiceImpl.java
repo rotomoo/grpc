@@ -22,7 +22,7 @@ public class HelloGrpcServiceImpl extends HelloGrpc.HelloImplBase {
         // client -> server request
         logger.info("\n=== Unary Request Data \n{}===\n", helloRequest);
 
-        // 응답 데이터 셋업
+        // response 데이터 셋업
         HelloResponse helloResponse = HelloResponse.newBuilder()
             .setGreetingMessage("hi, " + helloRequest.getName() + " age:" + helloRequest.getAge())  // .proto에 정의한 response value
             .setQuestionMessage("server -> client Response arrived?")  // .proto에 정의한 response value
@@ -73,11 +73,41 @@ public class HelloGrpcServiceImpl extends HelloGrpc.HelloImplBase {
             @Override
             public void onCompleted() {
                 HelloResponse helloResponse = HelloResponse.newBuilder()
-                    .setGreetingMessage("hi, " + sb)
-                    .setQuestionMessage("Server received all requests.")
+                    .setGreetingMessage(sb.toString())
+                    .setQuestionMessage("server -> client all Response arrived?")
                     .build();
 
                 responseObserver.onNext(helloResponse);
+                responseObserver.onCompleted();
+            }
+        };
+    }
+
+    /**
+     * Bidirectional Streaming RPC
+     */
+    @Override
+    public StreamObserver<HelloRequest> bidiHello(StreamObserver<HelloResponse> responseObserver) {
+        return new StreamObserver<HelloRequest>() {
+
+            @Override
+            public void onNext(HelloRequest helloRequest) {
+                logger.info("\n=== Bidirectional Streaming Request Data \n{}===", helloRequest);
+                HelloResponse helloResponse = HelloResponse.newBuilder()
+                    .setGreetingMessage("hi, " + helloRequest.getName() + " age:" + helloRequest.getAge())
+                    .setQuestionMessage("server -> client Response arrived?")
+                    .build();
+
+                responseObserver.onNext(helloResponse);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                logger.warn("\n=== Bidirectional Streaming Error \n{}===", t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
                 responseObserver.onCompleted();
             }
         };

@@ -8,6 +8,7 @@ import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,8 @@ public class HelloGrpcClientCaller {
      * 서버에 Client Streaming RPC
      */
     public void sendClientStreamingAsync() {
+        // 비동기 방식이기 때문에 서버 Response 를 기다릴 CountDownLatch 추가
+        CountDownLatch latch = new CountDownLatch(1);
         StreamObserver<HelloResponse> responseObserver = new StreamObserver<HelloResponse>() {
             @Override
             public void onNext(HelloResponse helloResponse) {
@@ -72,12 +75,12 @@ public class HelloGrpcClientCaller {
 
             @Override
             public void onError(Throwable t) {
-                logger.warn("\n=== Client Streaming Response Data \n{}===", t.getMessage());
+                latch.countDown();
             }
 
             @Override
             public void onCompleted() {
-                logger.info("\n=== Client Streaming Completed ===");
+                latch.countDown();
             }
         };
 
@@ -99,5 +102,62 @@ public class HelloGrpcClientCaller {
             requestObserver.onNext(helloRequest);
         }
         requestObserver.onCompleted();
+
+        try {
+            // 응답 대기
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * 서버에 Bidirectional Streaming RPC
+     */
+    public void sendBidirectionalStreamingAsync() {
+        // 비동기 방식이기 때문에 서버 Response 를 기다릴 CountDownLatch 추가
+        CountDownLatch latch = new CountDownLatch(1);
+        StreamObserver<HelloResponse> responseObserver = new StreamObserver<HelloResponse>() {
+            @Override
+            public void onNext(HelloResponse helloResponse) {
+                logger.info("\n=== Bidirectional Streaming Response Data \n{}===", helloResponse);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        };
+
+        StreamObserver<HelloRequest> requestObserver = asyncStub.bidiHello(responseObserver);
+
+        List<HelloRequest> helloRequestList = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            helloRequestList.add(
+                HelloRequest.newBuilder()
+                    .setName(i + ". " + "rotomoo")
+                    .setAge(32 + i)
+                    .setMessage(i + ". " + "client -> server Request")
+                    .build()
+            );
+        }
+
+        for (HelloRequest helloRequest: helloRequestList) {
+            requestObserver.onNext(helloRequest);
+        }
+        requestObserver.onCompleted();
+
+        try {
+            // 응답 대기
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
