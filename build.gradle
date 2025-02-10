@@ -46,12 +46,4 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf:1.70.0'
     implementation 'io.grpc:grpc-stub:1.70.0'
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
-
-    // test
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
